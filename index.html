@@ -296,6 +296,7 @@ const newP=(n,o)=>({n:n||'Pemain',owner:o,pos:0,m:2000,jail:0,out:false,lap:0});
 const pc=i=>S.px&&S.px[i]!=null?S.px[i]:B[i][2];
 const isJabo=g=>g=='gr'||g=='db';
 const RM=[0,5,15,40,60,90];
+const JB=5,SR=[25,50,100,150],rb=i=>Math.max(2,Math.round(pc(i)/20)),jx=i=>isJabo(B[i][3])?JB:0;
 /* ===== ENGINE (host) — bergiliran ===== */
 const lg=t=>{S.log.unshift(t);S.log.length=Math.min(S.log.length,25)};
 function bust(p){p.out=true;p.m=0;const i=S.players.indexOf(p);for(const k in S.props)if(S.props[k].o==i)delete S.props[k];lg('💥 '+p.n+' bangkrut!')}
@@ -310,8 +311,8 @@ function nextTurn(){const alive=S.players.filter(p=>!p.out);if(alive.length==1){
 function after(p){if(p.out)return nextTurn();S.ph=(S.dbl>0&&!p.jail)?'roll':'end'}
 const full=(i,o)=>B.every((s,k)=>s[3]!=B[i][3]||(S.props[k]&&S.props[k].o==o));
 function rent(i,pr){const s=B[i],o=pr.o,own=t=>Object.keys(S.props).filter(k=>B[k][1]==t&&S.props[k].o==o).length;
- if(s[1]=='r')return 25*2**(own('r')-1);if(s[1]=='u')return(S.d[0]+S.d[1])*(own('u')>1?10:4);
- const b=Math.max(2,Math.round(pc(i)/20));return pr.h?b*RM[pr.h]:b*(full(i,o)?2:1)}
+ if(s[1]=='r')return SR[own('r')-1];if(s[1]=='u')return(S.d[0]+S.d[1])*(own('u')>1?10:4);
+ const b=rb(i);return(pr.h?b*RM[pr.h]:b*(full(i,o)?2:1))+jx(i)}
 function bencana(p){const k=S.players.indexOf(p);S.px=S.px||{};S.bl=S.bl||{};
  const cities=B.map((s,i)=>i).filter(i=>B[i][1]=='p'),nw=i=>Math.max(20,Math.round(pc(i)*.7/10)*10),
   qs=cities.filter(i=>nw(i)<pc(i)),free=cities.filter(i=>!S.props[i]&&!S.bl[i]),n=cities.filter(i=>S.props[i]&&S.props[i].o==k).length,o=[];
@@ -529,8 +530,8 @@ const LGT=g=>LIGHT[g]?';color:#2b2113;text-shadow:none':'',nmOf=s=>s[0].replace(
  picOf=i=>{const s=B[i];if(s[1]=='p'&&PH[nmOf(s)])return `<img src="${PH[nmOf(s)]}" onerror="this.style.display='none'">`;return ic(s[1]=='p'?CI[nmOf(s)]:s[1]=='r'?'train':/PLN/.test(s[0])?'bolt':'drop')},
  ownedBy=k=>Object.keys(S.props).filter(i=>S.props[i].o==k);
 function deedInfo(i){const s=B[i],t=s[1],pr=pc(i),g=s[3];let r='';
- if(t=='p'){const b=Math.max(2,Math.round(pr/20));r=rg('Sewa tanah',fm(b))+rg('Set lengkap',fm(b*2))+[1,2,3,4].map(h=>rg('Sewa '+'🏠'.repeat(h),fm(b*RM[h]))).join('')+rg('Sewa 🏨',fm(b*RM[5]))+rg('Bangun 🏠',fm(HC[g]))}
- else if(t=='r')r=[1,2,3,4].map(n=>rg('Punya '+n+' stasiun',fm(25*2**(n-1)))).join('');
+ if(t=='p'){const b=rb(i),j=jx(i);r=rg('Sewa tanah',fm(b+j))+rg('Set lengkap',fm(b*2+j))+[1,2,3,4].map(h=>rg('Sewa '+'🏠'.repeat(h),fm(b*RM[h]+j))).join('')+rg('Sewa 🏨',fm(b*RM[5]+j))+rg('Bangun 🏠',fm(HC[g]))}
+ else if(t=='r')r=[1,2,3,4].map(n=>rg('Punya '+n+' stasiun',fm(SR[n-1]))).join('');
  else r=rg('Punya 1','4 × dadu')+rg('Punya 2','10 × dadu');
  return `<div class=rg>${r}</div>`}
 function buyDlg(p){const i=p.pos,s=B[i],t=s[1],isP=t=='p',pr=pc(i),hc=isP?HC[s[3]]:0,bg=s[3]?G[s[3]]:'#555';
@@ -540,9 +541,9 @@ function buyDlg(p){const i=p.pos,s=B[i],t=s[1],isP=t=='p',pr=pc(i),hc=isP?HC[s[3
  +`<div class="dbtn dga"><button class=g ${p.m>=pr?'':'disabled'} onclick="A('buy')">Beli ${isP?'Tanah ':''}${fm(pr)}</button>`
  +(isP?`<button class=g ${p.lap&&p.m>=pr+hc?'':'disabled'} onclick="A('buy','h')">${p.lap?'Tanah + 🏠 '+fm(pr+hc):'🏠 setelah lewat Mulai'}</button>`:'')
  +`<button class=s onclick="A('skip')">Lewati</button></div></div>`}
-function upgDlg(p){const i=p.pos,s=B[i],pr=S.props[i],g=s[3],hc=HC[g],b=Math.max(2,Math.round(pc(i)/20)),hot=pr.h==4;
+function upgDlg(p){const i=p.pos,s=B[i],pr=S.props[i],g=s[3],hc=HC[g],b=rb(i),hot=pr.h==4;
  return `<div class=dh style="background:${G[g]}${LGT(g)}">${s[0]}</div><div class=dgb><div class=dgi><div class=dsub>Kotamu sendiri · ${pr.h?pr.h+' rumah':'tanah kosong'}</div><div class=dpic>${picOf(i)}</div>`
- +`<div class=dp>Bangun ${hot?'Hotel':'Rumah ke-'+(pr.h+1)} ${fm(hc)}</div><div class=rg>${rg('Sewa sekarang',fm(rent(i,pr)))}${rg('Sewa sesudah',fm(b*RM[pr.h+1]))}</div><div class=dnote>💰 Uangmu ${fm(p.m)}</div></div>`
+ +`<div class=dp>Bangun ${hot?'Hotel':'Rumah ke-'+(pr.h+1)} ${fm(hc)}</div><div class=rg>${rg('Sewa sekarang',fm(rent(i,pr)))}${rg('Sewa sesudah',fm(b*RM[pr.h+1]+jx(i)))}</div><div class=dnote>💰 Uangmu ${fm(p.m)}</div></div>`
  +`<div class="dbtn dga"><button class=g ${p.m>=hc?'':'disabled'} onclick="A('build',${i})">${hot?'🏨 Bangun Hotel':'🏠 Bangun Rumah'} ${fm(hc)}</button><button class=s onclick="A('skip')">Lewati</button></div></div>`}
 function rentDlg(p){const d=S.due,short=p.m<d.a,own=ownedBy(S.cur),hs=own.filter(i=>S.props[i].h>0),has=own.length>0;let head,sub;
  if(d.to>=0){const s=B[d.t],pr=S.props[d.t],o=S.players[d.to],bg=s[3]?G[s[3]]:'#555';
