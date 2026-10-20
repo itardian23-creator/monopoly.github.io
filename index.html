@@ -188,10 +188,27 @@ padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:linear-gradie
 .perf .pop,.perf .cdk.show,.perf #dlg.show,.perf .deed.show{animation:none!important}
 .perf *{text-shadow:none!important}
 .perf .pawn{transition-duration:.12s}
+
+/* ===== MODE PETA SEGITIGA ===== */
+.board.tri{display:block;padding:0;border:0;background:none;box-shadow:none;border-radius:0}
+.tri .tbg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.tri .t{position:absolute;width:8.4cqw;height:8.4cqw;transform-origin:50% 50%}
+.tri .ctr{grid-area:auto;position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}
+.tri .map{clip-path:polygon(50% 20.2%,86.05% 92.3%,13.95% 92.3%)}
+.tri .dk{left:32cqw;top:59cqw;width:15cqw;height:11cqw}
+.tri .dc{left:53cqw;top:59cqw;width:15cqw;height:11cqw}
+.tri .toast{left:36cqw;right:auto;width:28cqw;top:48cqw;height:9cqw;font-size:max(8px,1.3cqw);line-height:1.15}
+.tri .dicebox{--ds:5.2cqw;left:42.5cqw;right:auto;width:15cqw;top:36cqw;height:8cqw}
+.tri .dicebox .sc:first-child{--dx:-6cqw}.tri .dicebox .sc:last-child{--dx:6cqw}
+.tri .ctl{left:27cqw;right:auto;width:46cqw;top:73.5cqw;height:13cqw;pointer-events:auto}
+.tri .ctl.lob{left:31cqw;width:38cqw;top:58cqw;height:33cqw}
+.tri .cdk{left:27%;right:27%;top:30%;bottom:10%;pointer-events:auto}
+.tri .pawn{width:3.9cqw;height:6.1cqw}
 </style></head><body>
 <h1 id="tt">🇮🇩 MONOPOLI INDONESIA</h1>
 <div id="home">
  <h2>Main Bareng Online</h2><small>Maksimal 5 pemain</small>
+ <div id="shp" style="margin:6px 0"><small style="display:block">Bentuk peta</small><button id="shq" onclick="setShape(0)">□ Kotak</button><button id="sht" onclick="setShape(1)">△ Segitiga</button></div>
  <input id="nm" placeholder="Nama kamu" maxlength="12">
  <button onclick="hostGame(0)">🎲 Buat Room</button>
  <input id="cd" placeholder="Kode room" maxlength="5" style="text-transform:uppercase">
@@ -200,7 +217,7 @@ padding:6px 8px calc(6px + env(safe-area-inset-bottom));background:linear-gradie
  <div id="fc"></div>
  <div id="err"></div>
 </div>
-<div class="tb"><button class="rb" title="Aturan" onclick="alert('Main bergiliran. Lempar dadu, beli kota (sebelum pertama kali lewat Mulai kamu baru boleh membeli tanah, belum boleh membangun rumah), tagih sewa. Punya satu warna lengkap = sewa 2x. Kena kotamu sendiri, kamu bisa tambah rumah atau hotel. Kalau uang kurang untuk bayar denda, jual rumah (atau tanah kalau sudah tidak ada rumah). Ketuk kartu pemain di bawah untuk melihat properti. Petak Bencana: gempa menurunkan harga kota, kebakaran hutan menutup pembelian kota sampai ada yang lewat Mulai, korupsi mengurangi uang 20jt, proyek sawit pemerintah menggusur satu rumah setiap pemain (di kota mana pun, yang tidak punya rumah aman), dan pajak bencana 10jt per kota yang kamu punya. Kartu Kesempatan juga bisa memberi Kartu Doa (kebal dari satu kejadian buruk: denda, pajak, penjara, penggusuran sawit, atau tanah diambil paksa), dana korupsi minyak 200jt, investasi 10jt dari semua pemain, menang pemilu (bebas parkir), dan sangat jarang: pemerintah mengambil paksa tanah satu pemain. Kawasan Jabodetabek (hijau & biru tua) adalah yang termahal! Pemain terakhir yang tersisa menang!\n\nPapan bisa digeser kapan saja: seret dengan jari/mouse, cubit atau scroll untuk zoom, ketuk dua kali untuk reset. Tombol tidak perlu menunggu pion selesai berjalan.')"><b style="font:italic 800 22px Georgia,serif">i</b></button><button class="rb" id="snd" title="Suara" onclick="setMute(!muted)">🔊</button><button class="rb" title="Layar penuh" onclick="goFull()">⛶</button><button class="rb" title="Mode 3D" onclick="tilt=!tilt;setTilt()">✥</button><button class="rb" id="pf" title="Mode hemat (anti lag)" onclick="setPerf(!perf)"><b style="font-size:18px">⚡</b></button><button class="rb" title="Reset posisi papan" onclick="resetView()">⌖</button><button class="rb" title="Keluar" onclick="confirm('Keluar dari game?')&&location.reload()">✕</button></div>
+<div class="tb"><button class="rb" title="Aturan" onclick="alert('Main bergiliran. Lempar dadu, beli kota (sebelum pertama kali lewat Mulai kamu baru boleh membeli tanah, belum boleh membangun rumah), tagih sewa. Punya satu warna lengkap = sewa 2x. Kena kotamu sendiri, kamu bisa tambah rumah atau hotel. Kalau uang kurang untuk bayar denda, jual rumah (atau tanah kalau sudah tidak ada rumah). Ketuk kartu pemain di bawah untuk melihat properti. Petak Bencana: gempa menurunkan harga kota, kebakaran hutan menutup pembelian kota sampai ada yang lewat Mulai, korupsi mengurangi uang 20jt, proyek sawit pemerintah menggusur satu rumah setiap pemain (di kota mana pun, yang tidak punya rumah aman), dan pajak bencana 10jt per kota yang kamu punya. Kartu Kesempatan juga bisa memberi Kartu Doa (kebal dari satu kejadian buruk: denda, pajak, penjara, penggusuran sawit, atau tanah diambil paksa), dana korupsi minyak 200jt, investasi 10jt dari semua pemain, menang pemilu (bebas parkir), dan sangat jarang: pemerintah mengambil paksa tanah satu pemain. Kawasan Jabodetabek (hijau & biru tua) adalah yang termahal! Bonus putaran: setiap pemain yang menyelesaikan 10 putaran (lewat Mulai 10 kali), lalu 20, 30, dan seterusnya, dapat bonus 500jt. Pemain terakhir yang tersisa menang!\n\nPapan bisa digeser kapan saja: seret dengan jari/mouse, cubit atau scroll untuk zoom, ketuk dua kali untuk reset. Tombol tidak perlu menunggu pion selesai berjalan.')"><b style="font:italic 800 22px Georgia,serif">i</b></button><button class="rb" id="snd" title="Suara" onclick="setMute(!muted)">🔊</button><button class="rb" title="Layar penuh" onclick="goFull()">⛶</button><button class="rb" title="Mode 3D" onclick="tilt=!tilt;setTilt()">✥</button><button class="rb" id="pf" title="Mode hemat (anti lag)" onclick="setPerf(!perf)"><b style="font-size:18px">⚡</b></button><button class="rb" title="Reset posisi papan" onclick="resetView()">⌖</button><button class="rb" title="Keluar" onclick="confirm('Keluar dari game?')&&location.reload()">✕</button></div>
 <div id="fsh" onclick="this.style.display='none'"><div><b>Layar penuh di iPhone</b><br>Safari di iPhone tidak mengizinkan tombol layar penuh dari halaman web. Cara gampangnya:<br>1. Ketuk tombol <b>Bagikan</b> (kotak dengan panah ke atas) di Safari.<br>2. Pilih <b>Tambah ke Layar Utama</b>, lalu <b>Tambah</b>.<br>3. Buka game dari ikon baru itu. Tampil layar penuh tanpa bilah Safari.<br><small>Di Android dan iPad, tombol ini langsung bekerja.</small><button class="g">Mengerti</button></div></div>
 <div id="rot"><span>📱</span><p>Putar HP kamu ke mode <b>landscape</b><br>untuk bermain</p><button onclick="rot.classList.remove('show')">Tetap portrait</button></div>
 <div id="game"><div class="stage" id="stg"><div class="board" id="bd"></div></div><div class="side" id="sd"></div></div>
@@ -271,7 +288,8 @@ const EM={'🎲':'dice','🏠':'house','🏨':'hotel','🏆':'trophy','💎':'ge
 const EMR=/(🎲|🏠|🏨|🏆|💎|💰|⛓|⚡|🚰|🃏|💥|🔨|🇮🇩|📱)\uFE0F?/gu;
 const D=t=>String(t).replace(EMR,(m,k)=>ic(EM[k]));
 
-const mk=()=>({st:0,rc:0,players:[],props:{},px:{},bl:{},cur:0,ph:'roll',d:[1,1],dbl:0,log:[],win:null});
+let shapeSel=0;try{shapeSel=+localStorage.getItem('shape')||0}catch(_){}
+const mk=()=>({shape:0,st:0,rc:0,players:[],props:{},px:{},bl:{},cur:0,ph:'roll',d:[1,1],dbl:0,log:[],win:null});
 let S=mk(),peer,conns=[],conn,isHost=false,code='',local=false;
 const myId=()=>isHost?'host':(peer&&peer.id);
 const newP=(n,o)=>({n:n||'Pemain',owner:o,pos:0,m:2000,jail:0,out:false,lap:0});
@@ -284,7 +302,7 @@ function bust(p){p.out=true;p.m=0;const i=S.players.indexOf(p);for(const k in S.
 function pay(p,a,to){const g=Math.min(p.m,a);p.m-=a;if(to)to.m+=g;if(p.m<0)bust(p)}
 const hasP=k=>Object.keys(S.props).some(i=>S.props[i].o==k);
 function owe(p,a,to,w){if(p.m>=a||!hasP(S.players.indexOf(p))){pay(p,a,to);return 0}S.due={t:p.pos,to:to==null?-1:S.players.indexOf(to),a,w};S.ph='rent';return 1}
-function passGo(p){p.m+=200;p.lap=1;lg(p.n+' lewat Mulai +200');if(S.bl&&Object.keys(S.bl).length){const n=Object.keys(S.bl).map(i=>B[i][0]).join(', ');S.bl={};lg('Lahan '+n+' sudah pulih, bisa dibeli lagi')}}
+function passGo(p){p.m+=200;p.lap=1;lg(p.n+' lewat Mulai +200');p.laps=(p.laps||0)+1;if(p.laps%10==0){p.m+=500;lg('Bonus! '+p.n+' menyelesaikan '+p.laps+' putaran +500jt');S.sfn=(S.sfn||0)+1;S.sf={id:S.sfn,x:p.n+' menyelesaikan '+p.laps+' putaran, bonus 500 juta'}}if(S.bl&&Object.keys(S.bl).length){const n=Object.keys(S.bl).map(i=>B[i][0]).join(', ');S.bl={};lg('Lahan '+n+' sudah pulih, bisa dibeli lagi')}}
 function guard(p,w){p.shield=0;lg('Kartu Doa melindungi '+p.n+' dari '+w);S.sfn=(S.sfn||0)+1;S.sf={id:S.sfn,x:'Kartu Doa melindungi '+p.n}}
 function jail(p){if(p.shield)return guard(p,'penjara');p.pos=10;p.jail=3;S.dbl=0;lg('⛓️ '+p.n+' masuk penjara')}
 function nextTurn(){const alive=S.players.filter(p=>!p.out);if(alive.length==1){S.win=S.players.indexOf(alive[0]);return}
@@ -357,7 +375,7 @@ function act(from,y,a){if(!S.st||S.win!=null)return;const p=S.players[S.cur];if(
 /* ===== NETWORK ===== */
 function push(){conns.forEach(c=>c.open&&c.send({t:'s',s:S}));render();botTick()}
 function showGame(){home.style.display='none';game.style.display='flex';render()}
-function hostGame(lc){const n=nm.value.trim()||'Host';local=lc;isHost=true;S=mk();S.players.push(newP(n,'host'));
+function hostGame(lc){const n=nm.value.trim()||'Host';local=lc;isHost=true;S=mk();S.shape=shapeSel;S.players.push(newP(n,'host'));
  if(lc)return showGame();
  if(typeof Peer=='undefined')return err.textContent='Gagal memuat PeerJS. Cek koneksi internet.';
  code=Math.random().toString(36).slice(2,7).toUpperCase();peer=new Peer('monoid-'+code);
@@ -371,6 +389,8 @@ function joinGame(){const n=nm.value.trim()||'Pemain';code=cd.value.trim().toUpp
  peer.on('open',()=>{conn=peer.connect('monoid-'+code);conn.on('open',()=>{conn.send({t:'j',n});showGame()});
   conn.on('data',d=>{if(d.t=='s'){S=d.s;render()}});conn.on('close',()=>alert('Koneksi ke host terputus'))})}
 const A=(y,a)=>isHost?act('host',y,a):conn&&conn.send({t:'a',y,a});
+function togShape(){if(!isHost||S.st)return;S.shape=S.shape?0:1;push()}
+function setShape(n){shapeSel=n;try{localStorage.setItem('shape',n)}catch(_){}shq.className=n?'s':'g';sht.className=n?'g':'s'}
 function startG(){if(S.players.length<2)return alert('Minimal 2 pemain');S.st=1;lg('Permainan dimulai!');push()}
 function addLocal(){if(S.players.length<5){S.players.push(newP('Pemain '+(S.players.length+1),'host'));push()}}
 /* ===== SUARA: kocokan dadu + pengumuman angka (bahasa Indonesia) ===== */
@@ -396,6 +416,14 @@ const sideOf=i=>i<=10?'sb':i<20?'sl':i<=30?'st':'sr';
 const xy=i=>i<=10?[11,11-i]:i<20?[21-i,1]:i<=30?[1,i-19]:[i-29,11];
 const die=id=>`<div class=sc><div class=hv><div class=die id=${id}><div class=f>${[...Array(9)].map(()=>'<i></i>').join('')}</div></div></div></div>`;
 const RS=[1.4,1,1,1,1,1,1,1,1,1,1.4],gc=n=>{let a=0;for(let i=0;i<n-1;i++)a+=RS[i];return .6+(a+RS[n-1]/2)/11.8*100};
+/* ===== GEOMETRI PETA SEGITIGA: 40 petak di keliling segitiga (MULAI di sudut kanan bawah, searah jarum jam) ===== */
+const TRI={t:5.8,s:5.8/8.4,L:[7.6,95.6],R:[92.4,95.6],T:[50,10.9]};
+function tp(i){const{L,R,T}=TRI;let a,b,f;if(i<=14){a=R;b=L;f=i/14}else if(i<=27){a=L;b=T;f=(i-14)/13}else{a=T;b=R;f=(i-27)/13}return[a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f]}
+function gstyle(i){if(!S.shape){const[r,c]=xy(i);return `grid-area:${r}/${c}`}const[x,y]=tp(i);return `left:${x.toFixed(2)}cqw;top:${y.toFixed(2)}cqw;transform:translate(-50%,-50%) scale(${TRI.s.toFixed(4)})`}
+function triBg(){return '<svg class=tbg viewBox="0 0 100 100" preserveAspectRatio="none"><defs><linearGradient id=tg x1=0 y1=0 x2=0 y2=1><stop offset=0 stop-color="#f9ecc6"/><stop offset=1 stop-color="#e6cd8f"/></linearGradient></defs>'
+ +'<polygon points="50,2.6 99,100.4 1,100.4" fill="#6b4519" stroke="#6b4519" stroke-width="2" stroke-linejoin="round"/>'
+ +'<polygon points="50,1.2 99,99 1,99" fill="#d8b36a" stroke="#d8b36a" stroke-width="2" stroke-linejoin="round"/>'
+ +'<polygon points="50,3.5 97.3,97.9 2.7,97.9" fill="url(#tg)" stroke="#9a7b45" stroke-width=".4" stroke-linejoin="round"/></svg>'}
 const SKIN=['#ffd9b3','#f6c9a0','#e8b27f','#ffdcc0','#e0a875'];
 /* karakter 3D (SVG berarsir bola & bayangan) */
 var CHC={};
@@ -435,17 +463,17 @@ const PH={'Jakarta':'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYE
 const HDC={r:'#37474f',u:'#546e7a',t:'#6a1b9a',k:'#ef6c00',c:'#8d3b1b'},LIGHT={lb:1,ye:1};
 function tileHTML(s,i){const[r,c]=xy(i),t=s[1],cn=i%10==0;
  if(cn){const inner={0:`<div class=arrow style="transform:scaleX(-1)">${ic('arrow')}</div><b>MULAI +200</b>`,10:`<div class=bigi>${ic('jail')}</div><b>Penjara</b>`,20:'<div class=pk>P</div><b>Parkir Bebas</b>',30:`<div class=bigi>${ic('cop')}</div><b>Masuk Penjara</b>`}[i];
-  return `<div class="t ${sideOf(i)} cn c${i}" id=t${i} style="grid-area:${r}/${c}"><div class=tx>${inner}</div></div>`}
+  return `<div class="t ${sideOf(i)} cn c${i}" id=t${i} style="${gstyle(i)}"><div class=tx>${inner}</div></div>`}
  const nm=s[0].replace(/\s*[⚡🚰]/g,''),mx=Math.max(...nm.split(' ').map(w=>w.length));
  const pic0=ic(t=='p'?CI[nm]:t=='k'?'q':t=='c'?'quake':t=='r'?'train':t=='u'?(/PLN/.test(s[0])?'bolt':'drop'):s[2]==200?'coin':'gem');
  const pic=pic0+(t=='p'&&PH[nm]?`<span class=ph style="background-image:url(${PH[nm]})"></span>`:'');
  const bg=t=='p'?G[s[3]]:HDC[t],cl=(mx>=9?' x':mx>=7?' m':'')+(t=='p'&&LIGHT[s[3]]?' l':'');
- return `<div class="t n ${sideOf(i)}" id=t${i} style="grid-area:${r}/${c}"><div class="hd${cl}" style="background:${bg}">${nm}</div><div class=pic>${pic}</div><div class=pr>${s[2]?'Rp'+s[2]:t=='t'?'Bayar':'&nbsp;'}</div></div>`}
+ return `<div class="t n ${sideOf(i)}" id=t${i} style="${gstyle(i)}"><div class="hd${cl}" style="background:${bg}">${nm}</div><div class=pic>${pic}</div><div class=pr>${s[2]?'Rp'+s[2]:t=='t'?'Bayar':'&nbsp;'}</div></div>`}
 function setTilt(){stg.classList.toggle('tilt',tilt);bd.style.setProperty('--sy',tilt?1.25:1)}
 const DT=[0,0];
 function showDie(j,v){const e=document.getElementById('d'+(j+1));if(!e)return;[...e.firstChild.children].forEach((x,k)=>x.className=PIP[v].includes(k)?'on':'')}
 function setDie(a,b,spin){[a,b].forEach((v,j)=>{clearInterval(DT[j]);if(!spin)return showDie(j,v);let n=0;DT[j]=setInterval(()=>{if(++n>7){clearInterval(DT[j]);showDie(j,v)}else showDie(j,1+Math.random()*6|0)},100)})}
-function build(){tt.style.display='none';rot.classList.add('show');let h='';B.forEach((s,i)=>h+=tileHTML(s,i));
+function build(){tt.style.display='none';rot.classList.add('show');bd.className='board'+(S.shape?' tri':'');PW.length=0;lastLog='';let h=S.shape?triBg():'';B.forEach((s,i)=>h+=tileHTML(s,i));
  bd.innerHTML=h+`<div class=ctr><svg class=map viewBox="0 0 100 100" preserveAspectRatio="none"><g fill="#a0702f" opacity=".4"><path d="M8 25q10-12 25-8t12 14q-6 12-18 10t-19-16z"/><path d="M30 55q8-6 14 4t-3 22q-8 6-12-6t1-20z"/><path d="M50 22q14-8 30-2t12 18q-10 8-22 4t-20-20z"/><path d="M54 48q10-6 20 2t4 22q-10 6-18-4t-6-20z"/><path d="M78 68q8-4 14 2t-4 10q-8 2-10-12z"/></g></svg><div class="deck dk">${ic('q')}</div><div class="deck dc">${ic('quake')}</div><div class=toast id=ts></div><div class=dicebox>${die('d1')}${die('d2')}</div><div class=ctl id=ctl></div><div class=cdk id=ck onclick="closeCard()"></div></div><div id=hl></div><div id=tl></div>`;
  T=B.map((_,i)=>document.getElementById('t'+i));lastDeed='x';lastProps='';lastPx='';for(const k in HS)delete HS[k];setDie(1,1);setTilt()}
 /* rumah & hotel 3D (SVG bersisi tiga: dinding depan, dinding samping, atap) */
@@ -473,7 +501,8 @@ function syncHouses(){B.forEach((_,i)=>{const pr=S.props[i],cur=HS[i];
 function hopPawn(w){const k=w.firstChild;k.classList.remove('hp');void k.offsetWidth;k.classList.add('hp')}
 function place(k,hp){const p=S.players[k];let w=PW[k];let fresh=0;
  if(!w){fresh=1;w=PW[k]=document.createElement('div');w.className='pawn';w.style.transition='none';w.innerHTML='<div class=tk><div class=sw>'+chr(k,'p')+'</div></div>';tl.appendChild(w)}
- const[r,c]=xy(dp[k]),t=`translate3d(${(gc(c)+(k-2)*1.2).toFixed(2)}cqw,${(gc(r)+(k%2?1.2:-.3)).toFixed(2)}cqw,0) translate(-50%,-88%) scaleY(var(--sy))`;
+ let px,py;if(S.shape){const q=tp(dp[k]);px=q[0]+(k-2)*.85;py=q[1]+(k%2?.9:-.2)}else{const[r,c]=xy(dp[k]);px=gc(c)+(k-2)*1.2;py=gc(r)+(k%2?1.2:-.3)}
+ const t=`translate3d(${px.toFixed(2)}cqw,${py.toFixed(2)}cqw,0) translate(-50%,-88%) scaleY(var(--sy))`;
  if(w._t!=t){w._t=t;w.style.transform=t}
  if(fresh){void w.offsetWidth;w.style.transition=''}
  const d=p.out?'none':'';if(w._d!==d){w._d=d;w.style.display=d}
@@ -539,7 +568,8 @@ function seizeDlg(p){const L=[];S.players.forEach((q,k)=>{if(k==S.cur||q.out)ret
  +`</div><div class="dbtn"><button class=s onclick="A('skip')">Lewati</button></div>`}
 let openP=-1,lastCur=-1,lastSf=null,lastPx='';
 function togP(k){openP=openP==k?-1:k;render()}
-function render(){if(!built){build();built=1}
+let bShape=-1;
+function render(){if(!built||bShape!==(S.shape|0)){bShape=S.shape|0;build();built=1}
  S.players.forEach((p,k)=>{if(dp[k]==null)dp[k]=p.pos});
  if(lastRc===null)lastRc=S.rc;
  if(S.rc!=lastRc){lastRc=S.rc;setDie(S.d[0],S.d[1],1);rollSfx(S.d[0],S.d[1]);document.querySelectorAll('.sc').forEach(e=>{e.classList.remove('hop');void e.offsetWidth;e.classList.add('hop')})}
@@ -559,7 +589,7 @@ function render(){if(!built){build();built=1}
  if(key!=lastDeed){lastDeed=key;dlg.className=showDeed?'show':'';
   dlg.innerHTML=showDeed?D(S.ph=='rent'?rentDlg(p):S.ph=='upg'?upgDlg(p):S.ph=='park'?parkDlg(p):S.ph=='seize'?seizeDlg(p):buyDlg(p)):''}
  let c='';ctl.className='ctl';
- if(!S.st){ctl.className='ctl lob';c=`<div>${isHost&&!local?`Kode room:<br><b style="font-size:2.2em;letter-spacing:5px;color:#a51c1c">${code}</b><br>Bagikan kode ke temanmu`:isHost?'Mode lokal':'Menunggu host memulai…'}</div><div>Pemain: ${S.players.length}/5</div>`+(isHost?`<div><button class=s onclick=addLocal()>+ Pemain lokal</button><button class=s onclick=addBot()>+ Bot</button><button class=g onclick=startG()>▶ Mulai</button></div>`:'')}
+ if(!S.st){ctl.className='ctl lob';c=`<div>${isHost&&!local?`Kode room:<br><b style="font-size:2.2em;letter-spacing:5px;color:#a51c1c">${code}</b><br>Bagikan kode ke temanmu`:isHost?'Mode lokal':'Menunggu host memulai…'}</div><div>Pemain: ${S.players.length}/5</div>`+(isHost?`<div><button class=s onclick=addLocal()>+ Pemain lokal</button><button class=s onclick=addBot()>+ Bot</button><button class=s onclick=togShape()>${S.shape?'△ Segitiga':'□ Kotak'}</button><button class=g onclick=startG()>▶ Mulai</button></div>`:'')}
  else if(S.win!=null){ctl.className='ctl lob';c=`<div style="font-size:6cqw">🏆</div><b>${CH[S.win]} ${esc(S.players[S.win].n)} MENANG!</b><button onclick=location.reload()>Main lagi</button>`}
  else{c=`<span style="color:${C[S.cur]};text-shadow:0 0 3px #fff">${CH[S.cur]} ${esc(p.n)}</span>`;
   if(can){if(S.ph=='roll')c+=`<button onclick="A('roll')">🎲 Lempar Dadu</button>`+(p.jail?`<button class=s onclick="A('pay')">Bayar 50</button>`:'');
@@ -646,4 +676,5 @@ function botStep(){if(!isHost||!S.st||S.win!=null)return;const p=S.players[S.cur
 setMute(muted);if(window.speechSynthesis)speechSynthesis.getVoices();
 new ResizeObserver(()=>{const h=sd.offsetHeight;if(h)document.documentElement.style.setProperty('--bh',h+'px')}).observe(sd);
 [tt,rot,...document.querySelectorAll('#home button')].forEach(e=>e.innerHTML=D(e.innerHTML));
+setShape(shapeSel);
 </script></body></html>
